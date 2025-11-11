@@ -63,7 +63,7 @@ A state-of-the-art, production-ready style transfer application featuring **AdaI
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/yourusername/StyleTransferApp.git
+git clone https://github.com/Ab-Romia/StyleTransferApp.git
 cd StyleTransferApp
 
 # 2. Install dependencies
@@ -664,9 +664,9 @@ If you use this code in your research, please cite:
 ```bibtex
 @software{advanced_style_transfer,
   title={Advanced Neural Style Transfer Platform},
-  author={Your Name},
+  author={Ab-Romia and mash3al-29},
   year={2024},
-  url={https://github.com/yourusername/StyleTransferApp}
+  url={https://github.com/Ab-Romia/StyleTransferApp}
 }
 ```
 
@@ -741,8 +741,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For questions, issues, or collaborations:
 
-- GitHub Issues: [Create an issue](https://github.com/yourusername/StyleTransferApp/issues)
-- Email: your.email@example.com
+- GitHub Issues: [Create an issue](https://github.com/Ab-Romia/StyleTransferApp/issues)
 
 ---
 
@@ -750,10 +749,10 @@ For questions, issues, or collaborations:
 
 If you find this project useful, please consider giving it a star!
 
-[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/StyleTransferApp&type=Date)](https://star-history.com/#yourusername/StyleTransferApp&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=Ab-Romia/StyleTransferApp&type=Date)](https://star-history.com/#Ab-Romia/StyleTransferApp&Date)
 
 ---
 
 <div align="center">
-  <strong>Made with ❤️ by the Neural Art community</strong>
+  <strong>Developed by Ab-Romia and mash3al-29</strong>
 </div>

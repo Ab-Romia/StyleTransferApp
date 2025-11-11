@@ -664,7 +664,7 @@ If you use this code in your research, please cite:
 ```bibtex
 @software{advanced_style_transfer,
   title={Advanced Neural Style Transfer Platform},
-  author={Ab-Romia and mash3al-29},
+  author={Abdelrahman Abouroumia and mash3al-29},
   year={2024},
   url={https://github.com/Ab-Romia/StyleTransferApp}
 }
@@ -755,5 +755,5 @@ If you find this project useful, please consider giving it a star!
 ---
 
 <div align="center">
-  <strong>Developed by Ab-Romia and mash3al-29</strong>
+  <strong>Developed by Abdelrahman Abouroumia and mash3al-29</strong>
 </div>

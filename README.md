@@ -742,6 +742,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 For questions, issues, or collaborations:
 
 - GitHub Issues: [Create an issue](https://github.com/Ab-Romia/StyleTransferApp/issues)
+- Email: aabouroumia@gmail.com
 
 ---
 

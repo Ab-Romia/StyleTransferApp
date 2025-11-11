@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Style Transfer - Neural Art Studio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --accent-color: #ec4899;
+            --success-color: #10b981;
+            --bg-light: #f8fafc;
+            --bg-card: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .main-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .card-glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            margin-bottom: 2rem;
+        }
+
+        .upload-zone {
+            border: 3px dashed var(--border-color);
+            border-radius: 15px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: var(--bg-light);
+            cursor: pointer;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary-color);
+            background: rgba(99, 102, 241, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--success-color);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .preview-card {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .preview-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .preview-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .control-panel {
+            background: var(--bg-light);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .control-group label i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .custom-range {
+            height: 8px;
+            border-radius: 10px;
+            background: linear-gradient(to right, #e2e8f0 0%, var(--primary-color) 100%);
+        }
+
+        .custom-range::-webkit-slider-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border: 3px solid white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-method {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            background: white;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            margin: 0.5rem;
+        }
+
+        .btn-method:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-method.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-color: transparent;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .result-section {
+            margin-top: 3rem;
+        }
+
+        .result-image-container {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loader-content {
+            text-align: center;
+            color: white;
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .feature-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-tooltip {
+            cursor: help;
+            color: var(--text-secondary);
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            margin: 0.5rem;
+        }
+
+        .stats-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stats-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-palette"></i> Neural Art Studio</h1>
+            <p>Advanced AI-Powered Style Transfer with AdaIN Technology</p>
+            <div class="d-flex justify-content-center gap-3 mt-3">
+                <span class="feature-badge"><i class="fas fa-bolt"></i> Real-time</span>
+                <span class="feature-badge"><i class="fas fa-palette"></i> Multi-Style</span>
+                <span class="feature-badge"><i class="fas fa-magic"></i> Color Preserve</span>
+                <span class="feature-badge"><i class="fas fa-expand"></i> High-Res</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="card-glass">
+            <h2 class="mb-4"><i class="fas fa-upload"></i> Upload Images</h2>
+
+            <div class="row">
+                <!-- Content Image Upload -->
+                <div class="col-md-6">
+                    <h5 class="mb-3">Content Image</h5>
+                    <div class="upload-zone" id="contentUpload" onclick="document.getElementById('contentInput').click()">
+                        <i class="fas fa-image upload-icon"></i>
+                        <p class="mb-0"><strong>Click or drag to upload</strong></p>
+                        <p class="text-muted small">Your photo that will be stylized</p>
+                    </div>
+                    <input type="file" id="contentInput" class="hidden" accept="image/*">
+                    <div id="contentPreview" class="mt-3 hidden">
+                        <div class="preview-card">
+                            <img id="contentImg" class="preview-image" alt="Content">
+                            <div class="preview-label">Content</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Style Image Upload -->
+                <div class="col-md-6">
+                    <h5 class="mb-3">Style Image</h5>
+                    <div class="upload-zone" id="styleUpload" onclick="document.getElementById('styleInput').click()">
+                        <i class="fas fa-paint-brush upload-icon"></i>
+                        <p class="mb-0"><strong>Click or drag to upload</strong></p>
+                        <p class="text-muted small">Art style to apply</p>
+                    </div>
+                    <input type="file" id="styleInput" class="hidden" accept="image/*" multiple>
+                    <div id="stylePreview" class="mt-3 hidden">
+                        <div id="styleImagesContainer" class="preview-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="card-glass">
+            <h2 class="mb-4"><i class="fas fa-sliders-h"></i> Style Transfer Controls</h2>
+
+            <div class="control-panel">
+                <!-- Method Selection -->
+                <div class="control-group">
+                    <label><i class="fas fa-brain"></i> Transfer Method</label>
+                    <div class="d-flex flex-wrap">
+                        <button class="btn-method active" data-method="adain">
+                            <i class="fas fa-bolt"></i> AdaIN (Fast)
+                            <span class="feature-badge">NEW</span>
+                        </button>
+                        <button class="btn-method" data-method="cnn">
+                            <i class="fas fa-network-wired"></i> CNN (Classic)
+                        </button>
+                        <button class="btn-method" data-method="vit">
+                            <i class="fas fa-eye"></i> Transformer (Advanced)
+                        </button>
+                    </div>
+                    <small class="text-muted mt-2 d-block">
+                        <strong>AdaIN:</strong> Real-time arbitrary style transfer (recommended) •
+                        <strong>CNN:</strong> Traditional method •
+                        <strong>ViT:</strong> Vision Transformer
+                    </small>
+                </div>
+
+                <!-- Style Strength -->
+                <div class="control-group">
+                    <label>
+                        <i class="fas fa-adjust"></i> Style Strength
+                        <span class="ms-auto" id="alphaValue">1.0</span>
+                    </label>
+                    <input type="range" class="form-range custom-range" id="alphaSlider"
+                           min="0" max="1" step="0.1" value="1.0">
+                    <small class="text-muted">Lower = More content, Higher = More style</small>
+                </div>
+
+                <!-- Advanced Options -->
+                <div class="control-group">
+                    <label><i class="fas fa-cog"></i> Advanced Options</label>
+
+                    <div class="row mt-2">
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex justify-content-between align-items-center p-3 bg-white rounded">
+                                <div>
+                                    <strong>Color Preservation</strong>
+                                    <br><small class="text-muted">Keep original colors</small>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="preserveColorToggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex justify-content-between align-items-center p-3 bg-white rounded">
+                                <div>
+                                    <strong>Multi-scale</strong>
+                                    <br><small class="text-muted">Better details</small>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="multiscaleToggle" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex justify-content-between align-items-center p-3 bg-white rounded">
+                                <div>
+                                    <strong>Attention</strong>
+                                    <br><small class="text-muted">Semantic-aware</small>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="attentionToggle" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multi-Style Blending (shown when multiple styles) -->
+                <div class="control-group hidden" id="multiStyleControls">
+                    <label><i class="fas fa-layer-group"></i> Multi-Style Blending</label>
+                    <div id="styleWeightsContainer"></div>
+                    <small class="text-muted">Adjust the influence of each style</small>
+                </div>
+            </div>
+
+            <!-- Transfer Button -->
+            <div class="text-center mt-4">
+                <button class="btn btn-primary-custom" id="transferBtn">
+                    <i class="fas fa-magic"></i> Transform Image
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div class="card-glass hidden fade-in" id="resultSection">
+            <h2 class="mb-4"><i class="fas fa-star"></i> Result</h2>
+
+            <!-- Stats -->
+            <div class="d-flex justify-content-center flex-wrap mb-4" id="statsContainer">
+                <div class="stats-card">
+                    <div class="stats-value" id="processingTime">-</div>
+                    <div class="stats-label">Processing Time</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-value" id="resolution">-</div>
+                    <div class="stats-label">Resolution</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-value" id="methodUsed">-</div>
+                    <div class="stats-label">Method</div>
+                </div>
+            </div>
+
+            <!-- Result Image -->
+            <div class="result-image-container">
+                <img id="resultImage" class="result-image" alt="Stylized Result">
+            </div>
+
+            <!-- Download Button -->
+            <div class="text-center mt-4">
+                <a id="downloadBtn" class="btn btn-success btn-lg" download="stylized.jpg">
+                    <i class="fas fa-download"></i> Download Result
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loader-overlay hidden" id="loadingOverlay">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <div class="progress-text">Transforming your image...</div>
+            <div class="text-muted" id="progressDetails">Initializing neural networks</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // State
+        let selectedMethod = 'adain';
+        let contentFile = null;
+        let styleFiles = [];
+
+        // Method selection
+        document.querySelectorAll('.btn-method').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.btn-method').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedMethod = this.dataset.method;
+            });
+        });
+
+        // Alpha slider
+        document.getElementById('alphaSlider').addEventListener('input', function() {
+            document.getElementById('alphaValue').textContent = this.value;
+        });
+
+        // Content image upload
+        document.getElementById('contentInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                contentFile = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('contentImg').src = e.target.result;
+                    document.getElementById('contentPreview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Style image upload (multiple)
+        document.getElementById('styleInput').addEventListener('change', function(e) {
+            styleFiles = Array.from(e.target.files);
+            const container = document.getElementById('styleImagesContainer');
+            container.innerHTML = '';
+
+            styleFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'preview-card';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" class="preview-image" alt="Style ${index + 1}">
+                        <div class="preview-label">Style ${index + 1}</div>
+                    `;
+                    container.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            document.getElementById('stylePreview').classList.remove('hidden');
+
+            // Show multi-style controls if multiple styles
+            if (styleFiles.length > 1) {
+                showMultiStyleControls();
+            } else {
+                document.getElementById('multiStyleControls').classList.add('hidden');
+            }
+        });
+
+        function showMultiStyleControls() {
+            const container = document.getElementById('styleWeightsContainer');
+            container.innerHTML = '';
+
+            styleFiles.forEach((file, index) => {
+                const weight = 1.0 / styleFiles.length;
+                container.innerHTML += `
+                    <div class="mb-3">
+                        <label>Style ${index + 1} Weight: <span id="weight${index}">${weight.toFixed(2)}</span></label>
+                        <input type="range" class="form-range custom-range style-weight-slider"
+                               data-index="${index}" min="0" max="1" step="0.1" value="${weight}">
+                    </div>
+                `;
+            });
+
+            document.getElementById('multiStyleControls').classList.remove('hidden');
+
+            // Add event listeners
+            document.querySelectorAll('.style-weight-slider').forEach(slider => {
+                slider.addEventListener('input', function() {
+                    document.getElementById(`weight${this.dataset.index}`).textContent = this.value;
+                });
+            });
+        }
+
+        // Drag and drop
+        ['contentUpload', 'styleUpload'].forEach(id => {
+            const element = document.getElementById(id);
+
+            element.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                element.classList.add('dragover');
+            });
+
+            element.addEventListener('dragleave', () => {
+                element.classList.remove('dragover');
+            });
+
+            element.addEventListener('drop', (e) => {
+                e.preventDefault();
+                element.classList.remove('dragover');
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const inputId = id === 'contentUpload' ? 'contentInput' : 'styleInput';
+                    const input = document.getElementById(inputId);
+                    input.files = files;
+                    input.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+
+        // Transfer button
+        document.getElementById('transferBtn').addEventListener('click', async function() {
+            if (!contentFile || styleFiles.length === 0) {
+                alert('Please upload both content and style images');
+                return;
+            }
+
+            // Show loading
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.remove('hidden');
+
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('content_image', contentFile);
+
+            if (styleFiles.length === 1) {
+                formData.append('style_image', styleFiles[0]);
+            } else {
+                styleFiles.forEach(file => {
+                    formData.append('style_images', file);
+                });
+
+                // Add style weights
+                const weights = [];
+                styleFiles.forEach((file, index) => {
+                    const slider = document.querySelector(`[data-index="${index}"]`);
+                    weights.push(slider ? slider.value : (1.0 / styleFiles.length));
+                });
+                formData.append('style_weights', weights.join(','));
+            }
+
+            formData.append('method', selectedMethod);
+            formData.append('alpha', document.getElementById('alphaSlider').value);
+            formData.append('preserve_color', document.getElementById('preserveColorToggle').checked);
+            formData.append('use_multiscale', document.getElementById('multiscaleToggle').checked);
+            formData.append('use_attention', document.getElementById('attentionToggle').checked);
+
+            // Simulate progress
+            const messages = [
+                'Loading neural networks...',
+                'Extracting content features...',
+                'Analyzing style patterns...',
+                'Applying style transfer...',
+                'Refining details...',
+                'Finalizing image...'
+            ];
+            let messageIndex = 0;
+            const progressInterval = setInterval(() => {
+                document.getElementById('progressDetails').textContent = messages[messageIndex];
+                messageIndex = (messageIndex + 1) % messages.length;
+            }, 1500);
+
+            try {
+                const startTime = Date.now();
+                const response = await fetch('/stylize', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
+
+                clearInterval(progressInterval);
+                loadingOverlay.classList.add('hidden');
+
+                if (response.ok) {
+                    // Show result
+                    document.getElementById('resultImage').src = data.result;
+                    document.getElementById('downloadBtn').href = data.result;
+                    document.getElementById('resultSection').classList.remove('hidden');
+
+                    // Update stats
+                    document.getElementById('processingTime').textContent = `${elapsedTime}s`;
+                    document.getElementById('resolution').textContent = `${data.result_size[0]}×${data.result_size[1]}`;
+                    document.getElementById('methodUsed').textContent = data.method.toUpperCase();
+
+                    // Scroll to result
+                    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                clearInterval(progressInterval);
+                loadingOverlay.classList.add('hidden');
+                alert('Error: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

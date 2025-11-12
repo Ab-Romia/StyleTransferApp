@@ -277,7 +277,31 @@ with torch.no_grad():
 
 ## 🏋️ Training
 
-### Prepare Dataset
+### 🆕 Google Colab Training (Recommended)
+
+**NEW**: Train all three models on Google Colab Free GPU!
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/)
+
+We provide a comprehensive Jupyter notebook optimized for Colab Free GPU that:
+- ✅ **Automatically downloads datasets** (MS-COCO + WikiArt)
+- ✅ **Trains all 3 models** (AdaIN, CNN, ViT)
+- ✅ **Generates performance plots** and comparisons
+- ✅ **Optimized for T4 GPU** (~15GB VRAM)
+- ✅ **Takes 3-4 hours** for complete training
+
+#### Quick Start:
+1. Upload `train_style_transfer_colab.ipynb` to Colab
+2. Enable GPU (Runtime → Change runtime type → T4 GPU)
+3. Run all cells!
+
+📖 **Full guide**: See [TRAINING_GUIDE.md](TRAINING_GUIDE.md) for detailed instructions.
+
+---
+
+### Local Training
+
+#### Prepare Dataset
 
 Organize your data:
 ```
@@ -294,7 +318,7 @@ data/
     └── ...
 ```
 
-### Train Model
+#### Train Model
 
 ```bash
 python train_advanced.py \

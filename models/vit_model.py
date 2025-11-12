@@ -18,14 +18,12 @@ class TransformerFeatures(nn.Module):
         super(TransformerFeatures, self).__init__()
         try:
             self.vit = timm.create_model('vit_base_patch16_224', pretrained=True)
-            
+            self.vgg = VGGFeatures()
+
             for param in self.parameters():
                 param.requires_grad = False
             self.eval()
-            
-            device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-            self.to(device)
-            
+
             print("Successfully initialized Vision Transformer")
         except Exception as e:
             print(f"Error initializing Vision Transformer: {e}")
@@ -73,13 +71,12 @@ class TransformerFeatures(nn.Module):
         return reshaped_features
     
     def forward(self, x):
-        vgg = VGGFeatures()
-        content_features, _ = vgg(x)
-        
+        content_features, _ = self.vgg(x)
+
         _, vit_features = self.vit_features(x)
-        
+
         vit_style_features = self.reshape_transformer_features(vit_features, content_features.shape)
-        
+
         return content_features, vit_style_features
 
 class StyleTransferModel(nn.Module):

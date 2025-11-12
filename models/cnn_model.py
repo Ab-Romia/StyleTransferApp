@@ -7,20 +7,17 @@ class VGGFeatures(nn.Module):
     def __init__(self):
         super(VGGFeatures, self).__init__()
         vgg = models.vgg19(weights=models.VGG19_Weights.IMAGENET1K_V1).features
-        
+
         self.slice1 = nn.Sequential(*list(vgg.children())[:2])
         self.slice2 = nn.Sequential(*list(vgg.children())[2:7])
         self.slice3 = nn.Sequential(*list(vgg.children())[7:12])
         self.slice4 = nn.Sequential(*list(vgg.children())[12:21])
         self.slice5 = nn.Sequential(*list(vgg.children())[21:22])
         self.slice6 = nn.Sequential(*list(vgg.children())[22:30])
-        
+
         for param in self.parameters():
             param.requires_grad = False
         self.eval()
-        
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.to(device)
     
     def forward(self, x):
         h1 = self.slice1(x)

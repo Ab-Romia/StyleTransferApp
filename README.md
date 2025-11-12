@@ -61,6 +61,14 @@ A state-of-the-art, production-ready style transfer application featuring **AdaI
 
 ## 🚀 Quick Start
 
+### Try Online (No Setup Required)
+
+Use our Hugging Face Space for instant style transfer:
+
+🤗 **[Try on Hugging Face Spaces →](https://huggingface.co/spaces/YOUR_USERNAME/neural-style-transfer)**
+
+### Local Installation
+
 ```bash
 # 1. Clone repository
 git clone https://github.com/Ab-Romia/StyleTransferApp.git
@@ -73,6 +81,21 @@ pip install -r requirements.txt
 python app_advanced.py
 
 # 4. Open browser at http://localhost:5000
+```
+
+### Deploy Your Own
+
+Deploy to Hugging Face Spaces in minutes:
+
+```bash
+# 1. Setup examples
+python setup_hf.py
+
+# 2. Run locally to test
+python gradio_app.py
+
+# 3. Deploy to Hugging Face
+# See DEPLOYMENT.md for complete guide
 ```
 
 ---
@@ -671,13 +694,43 @@ StyleTransferApp/
 - [x] Batch processing
 - [x] Video processing
 - [x] Modern web UI
+- [x] Hugging Face deployment
+- [x] Gradio interface
 - [ ] Mobile app
 - [ ] Model quantization (INT8)
 - [ ] Real-time webcam processing
-- [ ] Cloud deployment (AWS, GCP)
 - [ ] API documentation
 - [ ] Docker container
 - [ ] Pre-trained model zoo
+
+---
+
+## 🌐 Deployment
+
+### Hugging Face Spaces
+
+Deploy your own instance with one click:
+
+1. **Quick Deploy**:
+   ```bash
+   python setup_hf.py  # Setup examples
+   python gradio_app.py  # Test locally
+   ```
+
+2. **Upload to HF**:
+   - See [DEPLOYMENT.md](DEPLOYMENT.md) for complete guide
+   - Pre-configured Gradio interface included
+   - Supports both CPU and GPU
+   - Automatic API generation
+
+### Local Server
+
+Run as a web service:
+```bash
+python app_advanced.py  # Flask-based UI
+# or
+python gradio_app.py  # Gradio interface
+```
 
 ---
 
